@@ -12,21 +12,24 @@ import math
 
 st.title("Deep Learning")
 
-
-
+mode = st.segmented_control("Select Mode", ["Realtime Camera", "Upload Image"], default="Upload Image", selection_mode="single")
 selection = st.selectbox("Choose model", ["ResNet50","YoLoV11"])
-
-image = camera_input_live(1000)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+if mode == "Realtime Camera":
+  image = camera_input_live(1000)
+elif mode == "Upload Image":
+  image = st.file_uploader("Upload an Image", type=['jpg', 'png'])
 
 if image:
   # st.image(image)
   image = np.asarray(bytearray(image.read()), dtype="uint8") 
   image = cv2.imdecode(image, cv2.IMREAD_COLOR)
   image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-  image = cv2.resize(image, (512, 512))
+  
   model = state['models'][selection]
   if selection == "ResNet50":
+      image = cv2.resize(image, (512, 512))
       transform = transforms.Compose([
           transforms.ToTensor(),
           transforms.Resize((512,512)),
@@ -41,11 +44,12 @@ if image:
         st.write(labels[int(pred)])
 
   elif (selection == "YoLoV11"):
+      image = cv2.resize(image, (640, 640))
       results = model.predict(image)
       # st.write(labels[int(pred)])
       for r in results:
           boxes = r.boxes
-
+          # st.write(boxes)
           for box in boxes:
               x1, y1, x2, y2 = box.xyxy[0]
               x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2) # convert to int values
