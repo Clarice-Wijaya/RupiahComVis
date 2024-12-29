@@ -7,16 +7,17 @@ from streamlit import session_state as state
 
 st.title("Machine Learning")
 
-svm_pickle = load_pickle('svm_model.pkl')
-# rf_pickle = load_pickle('rf_model.pkl')
-
+mode = st.segmented_control("Select Mode", ["Realtime Camera", "Upload Image"], default="Upload Image", selection_mode="single")
 selection = st.selectbox("Choose model", [
     "K-Nearest Neighbour",
     "Support Vector Machine",
     "Random Forest"
 ])
 
-image = camera_input_live(200)
+if mode == "Realtime Camera":
+  image = camera_input_live(500)
+elif mode == "Upload Image":
+  image = st.file_uploader("Upload an Image", type=['jpg', 'png'])
 
 if image:
   image = np.asarray(bytearray(image.read()), dtype="uint8") 
