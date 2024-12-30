@@ -52,12 +52,24 @@ class ResNet50(torch.nn.Module):
         
     def forward(self, x):
         return self.resnet(x)
+    
+class VGG19(torch.nn.Module):
+    def __init__(self):
+        super(VGG19, self).__init__()
+        self.vgg19 = models.vgg19(pretrained=True)
+        self.vgg19.fc = torch.nn.Linear(in_features=2048, out_features=12)
+        # self.resnet.compile()
+        
+    def forward(self, x):
+        return self.vgg19(x)
 
 def load_pt(model_name=None):
     if model_name == "ResNet50":
         model = ResNet50()
-        model.load_state_dict(torch.load('resnet50.pth'))
+        # model = VGG19()
+        model.load_state_dict(torch.load('resnet50-3.pth'))
         model = model.to('cuda')
+        model.eval()
     if model_name == "YoLoV11":
-        model = YOLO("last.pt")
+        model = YOLO("last-3.pt")
     return model

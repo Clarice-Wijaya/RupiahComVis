@@ -25,27 +25,30 @@ if image:
   # st.image(image)
   image = np.asarray(bytearray(image.read()), dtype="uint8") 
   image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-  image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
   
   model = state['models'][selection]
   if selection == "ResNet50":
       image = cv2.resize(image, (512, 512))
       transform = transforms.Compose([
           transforms.ToTensor(),
-          transforms.Resize((512,512)),
       ])
       
       inference_image = transform(image)
       inference_image = inference_image.to(device)
+      model.eval()
       with torch.no_grad():
+        # st.write(inference_image.unsqueeze(0).shape)
         pred = model(inference_image.unsqueeze(0))
+        st.write(pred.data)
+        _, pred = torch.max(pred.data, 1)
         st.write(pred)
-        pred = torch.argmax(pred, dim=1)
         st.write(labels[int(pred)])
 
   elif (selection == "YoLoV11"):
-      image = cv2.resize(image, (640, 640))
+      image = cv2.resize(image, (600, 600))
       results = model.predict(image)
+      names = model.names
       # st.write(labels[int(pred)])
       for r in results:
           boxes = r.boxes
@@ -59,8 +62,8 @@ if image:
               org = [x1, y1-20]
               font = cv2.FONT_HERSHEY_SIMPLEX
 
-              cv2.putText(image, labels[cls], org, font, 1, (255, 0, 0), 2)
-              st.write(f"{labels[cls]}, confidence: {confidence}")
-  st.image(image)
+              cv2.putText(image, names[cls], org, font, 1, (0, 0, 255), 2)
+              st.write(f"{names[cls]}, confidence: {confidence}")
+  st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
   
   
