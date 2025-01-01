@@ -26,7 +26,15 @@ def extract_color(image):
     hue_mean = np.mean(hsv[:, :, 0])
     sat_mean = np.mean(hsv[:, :, 1])
     val_mean = np.mean(hsv[:, :, 2])
-    return hue_mean, sat_mean, val_mean
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    intensity_mean = np.mean(gray)
+
+    red_mean = np.mean(image[:, :, 2])
+    green_mean = np.mean(image[:, :, 1])
+    blue_mean = np.mean(image[:, :, 0])
+
+    return hue_mean, sat_mean, val_mean, intensity_mean, red_mean, green_mean, blue_mean
 
 # benang pengaman
 def detect_thread(image_gray):
@@ -40,9 +48,10 @@ def extract_features(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray=cv2.equalizeHist(gray)
     microtext_density = extract_microtext(gray)
-    hue, saturation, value = extract_color(image)
+    hue, saturation, value, intensity, red, green, blue = extract_color(image)
     thread_density = detect_thread(gray)
-    return [ microtext_density, hue, saturation, value, thread_density]
+    return [microtext_density, hue, saturation, value, intensity, red, green, blue, thread_density]
+    
 
 class ResNet50(torch.nn.Module):
     def __init__(self):
