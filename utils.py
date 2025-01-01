@@ -67,9 +67,9 @@ def load_pt(model_name=None):
     if model_name == "ResNet50":
         model = ResNet50()
         # model = VGG19()
-        model.load_state_dict(torch.load('resnet50-3.pth'))
+        model.load_state_dict(torch.load('resnet50-4.pth'))
         model = model.to('cuda')
         model.eval()
     if model_name == "YoLoV11":
-        model = YOLO("last-3.pt")
+        model = YOLO("last-4.pt")
     return model
