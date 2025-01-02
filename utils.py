@@ -87,11 +87,11 @@ class VGG19(torch.nn.Module):
 def load_pt(model_name=None):
     if model_name == "ResNet50":
         model = ResNet50()
-        state_dict = torch.load('resnet50-3.pth', map_location='cpu')
+        state_dict = torch.load('resnet50-4.pth', map_location='cpu')
         model.load_state_dict(state_dict)
         model.eval()
         return model
     elif model_name == "YoLoV11":
-        model = YOLO("last-3.pt")
+        model = YOLO("last-4.pt")
         return model
     return None
