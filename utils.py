@@ -72,14 +72,26 @@ class VGG19(torch.nn.Module):
     def forward(self, x):
         return self.vgg19(x)
 
+# def load_pt(model_name=None):
+#     if model_name == "ResNet50":
+#         model = ResNet50()
+#         # model = VGG19()
+#         model.load_state_dict(torch.load('resnet50-3.pth'))
+#         model = model.to('cuda')
+#         model.eval()
+#     if model_name == "YoLoV11":
+#         model = YOLO("last-3.pt")
+#     return model
+
+
 def load_pt(model_name=None):
     if model_name == "ResNet50":
         model = ResNet50()
-        # model = VGG19()
-        model.load_state_dict(torch.load('resnet50-4.pth'))
-        model = model.to('cuda')
+        state_dict = torch.load('resnet50-3.pth', map_location='cpu')
+        model.load_state_dict(state_dict)
         model.eval()
-    if model_name == "YoLoV11":
-        model = YOLO("last-4.pt")
-    return model
-
+        return model
+    elif model_name == "YoLoV11":
+        model = YOLO("last-3.pt")
+        return model
+    return None
